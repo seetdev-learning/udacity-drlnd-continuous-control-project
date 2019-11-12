@@ -20,19 +20,28 @@ class Agent():
         ======
             device (object): hardware device to run on CPU or GPU
             memory (object): memory for replay buffer
-            config (dict) - 
-                state_size (int): dimension of each state
-                action_size (int): dimension of each action
-                batch_size (int): minibatch size
-                random_seed (int): random seed
-                gamma (int): discount factor
-                tau (float): for soft update of target parameters
-                lr_actor (float): learning rate of the actor 
-                lr_critic (float): learning rate of the critic
-                weight_decay (int): L2 weight decay
-                update_every (int): learn from replay buffer every update_every time step
-                learn_batch_size (int): number of batch size samples to learn from replay buffer every update_every time step
-                grad_clip (float): gradient value to clip at for critic
+            config (dict)
+                - "state_size": dimension of each state
+                - "action_size": dimension of each action
+                - "buffer_size": replay buffer size
+                - "batch_size": minibatch size
+                - "random_seed": random seed
+                - "gamma": discount factor
+                - "tau": for soft update of target parameters
+                - "lr_actor": learning rate of the actor 
+                - "lr_critic": learning rate of the critic
+                - "weight_decay": L2 weight decay
+                - "learn_every": learn from replay buffer every time step
+                - "learn_batch_size": number of batches to learn from replay buffer every learn_every time step
+                - "grad_clip": gradient value to clip at for critic
+                - "eps_start": starting value of epsilon, for epsilon-greedy action selection
+                - "eps_end": minimum value of epsilon
+                - "eps_decay": multiplicative factor (per episode) for decreasing epsilon
+                - "print_every": Print average every x episode,
+                - "episode_steps": Maximum number of steps to run for each episode
+                - "mu": mu for noise
+                - "theta": theta for noise 
+                - "sigma": sigma for noise
         """
         self.state_size = config['state_size']
         self.action_size = config['action_size']
@@ -68,15 +77,15 @@ class Agent():
         self.critic_optimizer = optim.Adam(self.critic_local.parameters(), lr= self.lr_critic, weight_decay=self.weight_decay)
 
         # Noise process
-        self.noise = OUNoise(self.action_size, config['random_seed'])
+        self.noise = OUNoise(config)
     
-    def step(self, state, action, reward, next_state, done, timestep, current_score):
+    def step(self, state, action, reward, next_state, done, timestep):
         """Save experience in replay memory, and use random sample from buffer to learn."""
         # Save experience / reward
         self.memory.add(state, action, reward, next_state, done)
 
         # Learn, if enough samples are available in memory and every update_every time steps
-        if len(self.memory) > self.batch_size and (reward > 0 or timestep % self.learn_every == 0):
+        if len(self.memory) > self.batch_size and timestep % self.learn_every == 0:
             for i in range(self.learn_batch_size):
                 experiences = self.memory.sample()
                 self.learn(experiences)
@@ -161,13 +170,13 @@ class Agent():
 class OUNoise:
     """Ornstein-Uhlenbeck process."""
 
-    def __init__(self, size, seed, mu=0., theta=0.15, sigma=0.2):
+    def __init__(self, config):
         """Initialize parameters and noise process."""
-        self.mu = mu * np.ones(size)
-        self.theta = theta
-        self.sigma = sigma
-        if seed is not  None:
-            self.seed = random.seed(seed)
+        self.mu = config['mu'] * np.ones(config['action_size'])
+        self.theta =  config['theta']
+        self.sigma = config['sigma']
+        if config['random_seed'] is not None:
+            self.seed = random.seed(config['random_seed'])
         else:
             self.seed = random.seed()         
         self.reset()

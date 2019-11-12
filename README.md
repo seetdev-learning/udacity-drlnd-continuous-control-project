@@ -74,6 +74,31 @@ Run `conda activate --name drlnd-p2` (This is ran everytime before activating th
     - ipykernel
 2. Run `pip install unityagents` to install Unity Agents
 
+## Folder
+
+```
+.
+├── Continuous_Control.ipynb    # Original notebook
+├── LICENSE
+├── README.md                   # This file
+├── Report.pdf                  # pdf export of the runner's last run
+├── Report.ipynb                # Notebook with runner
+├── checkpoint_actor.pth        # Save weights file of Actor
+├── checkpoint_critic.pth       # Save weights file of Critic
+├── ddpg                        # ddpg agent folder
+│   ├── __init__.py             # init file to make ddpg a package
+│   ├── agent.py                # agent implementaion
+│   └── model.py                # model file for Actor and Critic
+├── env                         # various environments for single and multiple agents on different OS
+│   ├── multi_agent             
+│   └── single_agent
+├── python                      # files related to dependencies installation on Udacity workspace
+│   ├── ....
+└── replaybuffer.py             # code file for memory buffer
+```
+
 ## Running the agent
 
-## Possible Improvements
+1. Setup and activate the conda environment setup 
+2. Open Report.ipynb and set the `workspace` and `env_file_name` according to the runtime
+3. Run all cells in the notebook
