@@ -89,7 +89,7 @@ Run `conda activate --name drlnd-p2` (This is ran everytime before activating th
 │   ├── __init__.py             # init file to make ddpg a package
 │   ├── agent.py                # agent implementaion
 │   └── model.py                # model file for Actor and Critic
-├── env                         # various environments for single and multiple agents on different OS
+├── unity_environments          # various environments for single and multiple agents on different OS
 │   ├── multi_agent             
 │   └── single_agent
 ├── python                      # files related to dependencies installation on Udacity workspace
